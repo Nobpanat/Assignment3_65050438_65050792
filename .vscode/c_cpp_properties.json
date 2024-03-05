@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:\\External Libs\\GLEW\\include\\**",
+                "C:\\External Libs\\GLFW\\include\\**",
+                "C:\\External Libs\\GLM\\**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "C:\\msys64\\ucrt64\\bin\\gcc.exe"
+        }
+    ],
+    "version": 4
+}
