@@ -48,7 +48,7 @@ glm::vec3 lightPos = glm::vec3(5.0f, 5.0f, 0.0f);
 void CreateOBJ() 
 { 
     Mesh *obj1 = new Mesh(); 
-    bool loaded = obj1->CreateMeshFromOBJ("Models/suzanne.obj"); 
+    bool loaded = obj1->CreateMeshFromOBJ("Models/rocket4.obj"); 
     if (loaded) meshList.push_back(obj1); 
     else  std::cout<<"Failed to load model"<<std::endl; 
 
@@ -130,7 +130,7 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     int width, height, nrChannels;
-    unsigned char *data = stbi_load("Textures/uvmap.png", &width, &height, &nrChannels,0);
+    unsigned char *data = stbi_load("Textures/rocketP5.png", &width, &height, &nrChannels,0);
 
     if (data)
     {
@@ -138,6 +138,7 @@ int main()
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                      data);
         glGenerateMipmap(GL_TEXTURE_2D);
+        
     }
     else
     {
