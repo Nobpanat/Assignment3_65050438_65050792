@@ -48,13 +48,24 @@ glm::vec3 lightPos = glm::vec3(5.0f, 5.0f, 0.0f);
 void CreateOBJ() 
 { 
     Mesh *obj1 = new Mesh(); 
-    bool loaded = obj1->CreateMeshFromOBJ("Models/rocket4.obj"); 
+    bool loaded = obj1->CreateMeshFromOBJ("Models/moon.obj"); 
     if (loaded) meshList.push_back(obj1); 
     else  std::cout<<"Failed to load model"<<std::endl; 
 
     Mesh *light = new Mesh(); 
     light->CreateMeshFromOBJ("Models/cube.obj");
     meshListL.push_back(light);
+
+    Mesh *obj2 = new Mesh(); 
+    loaded = obj2->CreateMeshFromOBJ("Models/moon.obj"); 
+    if (loaded) meshList.push_back(obj2); 
+    else  std::cout<<"Failed to load model"<<std::endl; 
+
+    Mesh *obj3 = new Mesh(); 
+    loaded = obj3->CreateMeshFromOBJ("Models/earth.obj"); 
+    if (loaded) meshList.push_back(obj3); 
+    else  std::cout<<"Failed to load model"<<std::endl; 
+
 }
 
 void CreateShaders()
@@ -130,12 +141,13 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     int width, height, nrChannels;
-    unsigned char *data = stbi_load("Textures/rocketP5.png", &width, &height, &nrChannels,0);
+    unsigned char *data = stbi_load("Textures/8k_moon.jpg", &width, &height, &nrChannels,0);
+    stbi_set_flip_vertically_on_load(true);
 
     if (data)
     {
         // bind image with texture
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE,
                      data);
         glGenerateMipmap(GL_TEXTURE_2D);
         
@@ -160,7 +172,7 @@ int main()
 
         glm::vec3 pyramidPositions[] =
             {
-                glm::vec3(0.0f, 0.0f, -2.5f),
+                glm::vec3(0.0f, 0.0f, -4.0f),
                 glm::vec3(2.0f, 5.0f, -15.0f),
                 glm::vec3(-1.5f, -2.2f, -2.5f),
                 glm::vec3(-3.8f, -2.0f, -12.3f),
@@ -243,12 +255,12 @@ int main()
         
         // Object
 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 1; i++)
         {
 
             glm::mat4 model(1.0f);
             model = glm::translate(model, pyramidPositions[i]);
-            model = glm::rotate(model, glm::radians(2.0f * i), glm::vec3(1.0f, 0.3f, 0.5f));
+            // model = glm::rotate(model, glm::radians(2.0f * i), glm::vec3(1.0f, 0.3f, 0.5f));
             model = glm::scale(model, glm::vec3(0.8f, 0.8f, 1.0f));
 
             glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
