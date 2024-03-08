@@ -70,6 +70,13 @@ void CreateOBJ()
         meshList.push_back(obj3);
     else
         std::cout << "Failed to load model" << std::endl;
+
+    Mesh *obj4 = new Mesh();
+    loaded = obj4->CreateMeshFromOBJ("Models/star5.obj");
+    if (loaded)
+        meshList.push_back(obj4);
+    else
+        std::cout << "Failed to load model" << std::endl;
 }
 
 void CreateShaders()
@@ -217,6 +224,35 @@ int main()
 
     stbi_image_free(data3);
 
+    // textuer star
+
+    unsigned int texture4;
+    glGenTextures(1, &texture4);
+    glBindTexture(GL_TEXTURE_2D, texture4);
+
+    // ตั้งค่าการกระจายและการกระจายของ texture
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int width4, height4, nrChannels4;
+    unsigned char *data4 = stbi_load("Textures/8k_star_full.jpg", &width4, &height4, &nrChannels4, 0);
+    stbi_set_flip_vertically_on_load(true);
+
+    if (data4)
+    {
+        // ผูกภาพกับ texture
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width4, height4, 0, GL_RGB, GL_UNSIGNED_BYTE, data4);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+
+    stbi_image_free(data4);
+
     while (!mainWindow.getShouldClose())
     {
         // Get + Handle user input events
@@ -233,6 +269,7 @@ int main()
                 glm::vec3(0.0f, 5.0f, -4.0f),
                 glm::vec3(2.0f, 5.0f, -15.0f),
                 glm::vec3(-1.5f, -2.2f, -2.5f),
+                glm::vec3(0.0f, 0.0f, 0.0f),
                 glm::vec3(-3.8f, -2.0f, -12.3f),
                 glm::vec3(2.4f, -0.4f, -3.5f),
                 glm::vec3(-1.7f, 3.0f, -7.5f),
@@ -323,8 +360,6 @@ int main()
             glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
             glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
 
-            // เรนเดอร์โมเดล
-            meshList[i]->RenderMesh();
 
             // ผูก texture
             glActiveTexture(GL_TEXTURE0);
@@ -333,20 +368,25 @@ int main()
             if (i == 0)
             {
 
-                glBindTexture(GL_TEXTURE_2D, texture2);
+                glBindTexture(GL_TEXTURE_2D, texture);
             }
 
             // earth
             else if (i == 1)
             {
-                glBindTexture(GL_TEXTURE_2D, texture3);
+                glBindTexture(GL_TEXTURE_2D, texture2);
             }
 
             // rocket
             else if (i == 2)
             {
-                glBindTexture(GL_TEXTURE_2D, texture);
+                glBindTexture(GL_TEXTURE_2D, texture3);
             }
+            else if (i == 3){
+                glBindTexture(GL_TEXTURE_2D, texture4);
+            }
+            // เรนเดอร์โมเดล
+            meshList[i]->RenderMesh();
         }
 
         uniformView = shaderListL[0]->GetUniformLocation("view");
