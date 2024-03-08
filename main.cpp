@@ -41,32 +41,35 @@ static const char *vLightShader = "Shaders/lightShader.vert";
 // Fragment Shader
 static const char *fLightShader = "Shaders/lightShader.frag";
 
-glm::vec3 lightColor = glm::vec3(1.0f,1.0f,1.0f);
+glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 glm::vec3 lightPos = glm::vec3(5.0f, 5.0f, 0.0f);
 
+void CreateOBJ()
+{
+    Mesh *obj1 = new Mesh();
+    bool loaded = obj1->CreateMeshFromOBJ("Models/rocket4.obj");
+    if (loaded)
+        meshList.push_back(obj1);
+    else
+        std::cout << "Failed to load model" << std::endl;
 
-void CreateOBJ() 
-{ 
-    Mesh *obj1 = new Mesh(); 
-    bool loaded = obj1->CreateMeshFromOBJ("Models/rocket4.obj"); 
-    if (loaded) meshList.push_back(obj1); 
-    else  std::cout<<"Failed to load model"<<std::endl; 
-
-    Mesh *light = new Mesh(); 
+    Mesh *light = new Mesh();
     light->CreateMeshFromOBJ("Models/cube.obj");
     meshListL.push_back(light);
 
+    Mesh *obj2 = new Mesh();
+    loaded = obj2->CreateMeshFromOBJ("Models/moon.obj");
+    if (loaded)
+        meshList.push_back(obj2);
+    else
+        std::cout << "Failed to load model" << std::endl;
 
-    Mesh *obj2 = new Mesh(); 
-    loaded = obj2->CreateMeshFromOBJ("Models/moon.obj"); 
-    if (loaded) meshList.push_back(obj2); 
-    else  std::cout<<"Failed to load model"<<std::endl; 
-
-    Mesh *obj3 = new Mesh(); 
-    loaded = obj3->CreateMeshFromOBJ("Models/earth.obj"); 
-    if (loaded) meshList.push_back(obj3); 
-    else  std::cout<<"Failed to load model"<<std::endl; 
-
+    Mesh *obj3 = new Mesh();
+    loaded = obj3->CreateMeshFromOBJ("Models/moon.obj");
+    if (loaded)
+        meshList.push_back(obj3);
+    else
+        std::cout << "Failed to load model" << std::endl;
 }
 
 void CreateShaders()
@@ -79,8 +82,9 @@ void CreateShaders()
     shader2->CreateFromFiles(vLightShader, fLightShader);
     shaderListL.push_back(shader2);
 }
-float yaw = -90.0f, pitch = 0.0f;// -90 to Z
-void checkMouse(){
+float yaw = -90.0f, pitch = 0.0f; // -90 to Z
+void checkMouse()
+{
     float xOffset, yOffset;
 
     double xPos, yPos;
@@ -105,7 +109,6 @@ void checkMouse(){
     pitch = std::clamp(pitch, -89.0f, 89.0f);
 }
 
-
 int main()
 {
     mainWindow = Window(WIDTH, HEIGHT, 3, 3);
@@ -128,30 +131,27 @@ int main()
     glm::vec3 cameraRight = glm::normalize(glm::cross(cameraDirection, up));
     glm::vec3 cameraUp = glm::normalize(glm::cross(cameraRight, cameraDirection));
 
-
-
     float lastFrame = static_cast<float>(glfwGetTime());
     //------------------------------------
-    unsigned int texture; 
-    glGenTextures(1, &texture); 
-    glBindTexture(GL_TEXTURE_2D, texture); 
- 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);     
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR); 
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     int width, height, nrChannels;
-    unsigned char *data = stbi_load("Textures/8k_moon.jpg", &width, &height, &nrChannels,0);
+    unsigned char *data = stbi_load("Textures/uvmap.png", &width, &height, &nrChannels, 0);
     stbi_set_flip_vertically_on_load(true);
 
     if (data)
     {
         // bind image with texture
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE,
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
                      data);
         glGenerateMipmap(GL_TEXTURE_2D);
-        
     }
     else
     {
@@ -160,6 +160,63 @@ int main()
 
     stbi_image_free(data);
     // Loop until window closed
+
+    // texture moon
+    unsigned int texture2;
+    glGenTextures(1, &texture2);
+    glBindTexture(GL_TEXTURE_2D, texture2);
+
+    // ตั้งค่าการกระจายและการกระจายของ texture
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int width2, height2, nrChannels2;
+    unsigned char *data2 = stbi_load("Textures/8k_moon.jpg", &width2, &height2, &nrChannels2, 0);
+    stbi_set_flip_vertically_on_load(true);
+
+    if (data2)
+    {
+        // ผูกภาพกับ texture
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width2, height2, 0, GL_RGB, GL_UNSIGNED_BYTE, data2);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+
+    stbi_image_free(data2);
+
+    // texture earth
+    unsigned int texture3;
+    glGenTextures(1, &texture3);
+    glBindTexture(GL_TEXTURE_2D, texture3);
+
+    // ตั้งค่าการกระจายและการกระจายของ texture
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int width3, height3, nrChannels3;
+    unsigned char *data3 = stbi_load("Textures/8k_earth.jpg", &width3, &height3, &nrChannels3, 0);
+    stbi_set_flip_vertically_on_load(true);
+
+    if (data3)
+    {
+        // ผูกภาพกับ texture
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width3, height3, 0, GL_RGB, GL_UNSIGNED_BYTE, data3);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+
+    stbi_image_free(data3);
+
     while (!mainWindow.getShouldClose())
     {
         // Get + Handle user input events
@@ -173,9 +230,10 @@ int main()
 
         glm::vec3 pyramidPositions[] =
             {
-                glm::vec3(0.0f, 0.0f, -4.0f),
+                glm::vec3(0.0f, 5.0f, -4.0f),
                 glm::vec3(2.0f, 5.0f, -15.0f),
                 glm::vec3(-1.5f, -2.2f, -2.5f),
+                glm::vec3(0.0f, 5.0f, -4.0f),
                 glm::vec3(-3.8f, -2.0f, -12.3f),
                 glm::vec3(2.4f, -0.4f, -3.5f),
                 glm::vec3(-1.7f, 3.0f, -7.5f),
@@ -194,13 +252,11 @@ int main()
         float speed = 5.0f;
 
         glm::vec3 direction;
-        direction.x = cos(glm::radians(yaw))* cos(glm::radians(pitch));
+        direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
         direction.y = sin(glm::radians(pitch));
-        direction.z = sin(glm::radians(yaw))* cos(glm::radians(pitch));
+        direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
         cameraDirection = glm::normalize(direction);
 
-
-         
         glfwPollEvents();
         if (glfwGetKey(mainWindow.getWindow(), GLFW_KEY_W) == GLFW_PRESS)
         {
@@ -248,37 +304,58 @@ int main()
         view = glm::lookAt(cameraPos, cameraPos + cameraDirection, cameraUp);
         // view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
 
-        //light
+        // light
 
-        glUniform3fv(shaderList[0]->GetUniformLocation("lightColor"),1,(GLfloat*)&(lightColor));
+        glUniform3fv(shaderList[0]->GetUniformLocation("lightColor"), 1, (GLfloat *)&(lightColor));
         glUniform3fv(shaderList[0]->GetUniformLocation("lightPos"), 1, (GLfloat *)&lightPos);
         glUniform3fv(shaderList[0]->GetUniformLocation("viewPos"), 1, (GLfloat *)&cameraPos);
-        
+
         // Object
 
-        for (int i = 0; i < 1; i++)
+        for (int i = 0; i < meshList.size(); i++)
         {
-
+            // ตั้งค่าโมเดล
             glm::mat4 model(1.0f);
+            
             model = glm::translate(model, pyramidPositions[i]);
-            // model = glm::rotate(model, glm::radians(2.0f * i), glm::vec3(1.0f, 0.3f, 0.5f));
             model = glm::scale(model, glm::vec3(0.8f, 0.8f, 1.0f));
 
             glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
             glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
             glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
 
-            meshList[0]->RenderMesh();
+            // เรนเดอร์โมเดล
+            meshList[i]->RenderMesh();
 
+            // ผูก texture
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D,texture);
+
+            // moon
+            if (i == 0)
+            {
+
+                glBindTexture(GL_TEXTURE_2D, texture2);
+            }
+
+            // earth
+            else if (i == 1)
+            {
+                glBindTexture(GL_TEXTURE_2D, texture3);
+            }
+
+            // rocket
+            else if (i == 2)
+            {
+                glBindTexture(GL_TEXTURE_2D, texture);
+            }
         }
+
         uniformView = shaderListL[0]->GetUniformLocation("view");
         shaderListL[0]->UseShader();
         uniformModel = shaderListL[0]->GetUniformLocation("model");
         uniformProjection = shaderListL[0]->GetUniformLocation("projection");
         glm::mat4 model(1.0f);
-        model = glm::translate(model,glm::vec3(5.0f, 5.0f, 0.0f));
+        model = glm::translate(model, glm::vec3(5.0f, 5.0f, 0.0f));
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(view));
