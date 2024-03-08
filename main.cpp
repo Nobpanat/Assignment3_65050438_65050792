@@ -48,13 +48,14 @@ glm::vec3 lightPos = glm::vec3(5.0f, 5.0f, 0.0f);
 void CreateOBJ() 
 { 
     Mesh *obj1 = new Mesh(); 
-    bool loaded = obj1->CreateMeshFromOBJ("Models/moon.obj"); 
+    bool loaded = obj1->CreateMeshFromOBJ("Models/rocket4.obj"); 
     if (loaded) meshList.push_back(obj1); 
     else  std::cout<<"Failed to load model"<<std::endl; 
 
     Mesh *light = new Mesh(); 
     light->CreateMeshFromOBJ("Models/cube.obj");
     meshListL.push_back(light);
+
 
     Mesh *obj2 = new Mesh(); 
     loaded = obj2->CreateMeshFromOBJ("Models/moon.obj"); 
